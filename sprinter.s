@@ -205,7 +205,8 @@ sprinter:
 		incl %ecx          # Increase counter.
 
 		movb $120, (%ebx)   # Copy 'x' to result
-		# No need to increase %ebx and %ecx. It's done later. ->
+		incl %ebx						# ..
+		incl %ecx						# ..
 
 		jmp hex
 
