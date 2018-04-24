@@ -90,7 +90,7 @@ sprinter:
 
 			jmp increment      # Increase and return to main loop.
 
-	string: # TOOFKNDOHER
+	string:
 		movl (%ebp), %esi  # Move argument address to %ESI
 		movb (%esi), %al   # Move first char to %AL
 
@@ -136,7 +136,6 @@ sprinter:
 
 		incl %ecx             # Increase counter
 		incl %ebx             # Increase Result pointer.
-		# MER HER ?????? TODO
 
 
 	positive_integer:
@@ -205,9 +204,7 @@ sprinter:
 		incl %ecx          # Increase counter.
 
 		movb $120, (%ebx)   # Copy 'x' to result
-		incl %ebx						# ..
-		incl %ecx						# ..
-
+		# No need to increase %EBX and %ECX. It's done later ->
 		jmp hex
 
 
@@ -240,9 +237,6 @@ sprinter:
 	movb	$0, (%ebx) 		# Make %EBX ( result pointer ) trigger null-byte '\0'
 	movl 	%ecx, %eax 		# Return number of bytes copied.
 
-	# Reset work registers.
-	# popl 	%edi
-	# popl 	%esi
 	popl 	%ebp
 
 	ret 					# Finally return number of bytes copied.
