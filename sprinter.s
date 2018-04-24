@@ -200,11 +200,12 @@ sprinter:
 
 	zhex:
 		movb $48, (%ebx) 	 # Copy '0' to result
-		# incl %ebx          # Point to next in result
+		incl %ebx          # Point to next in result
 		incl %ecx          # Increase counter.
 
 		movb $120, (%ebx)   # Copy 'x' to result
-		# No need to increase counter and ebx, done later. ->
+		incl %ebx           # Point to next in result
+		# No need to increase counter, done later. ->
 		jmp hex
 
 
