@@ -5,7 +5,7 @@
 typedef unsigned char uc;
 
 extern int sprinter (uc *res, uc *format, ...);
-extern void dumpreg (void);
+
 
 
 /* check: Check the resulting string and return value: */
@@ -16,7 +16,6 @@ void check (int n, int ret1, int ret2, uc *buf1, uc *buf2)
   if (ret1==ret2 && strcmp(buf1,buf2)==0) {
     printf("Test %2d OK.\n", n);
     printf("Returning\n" );
-    dumpreg();
 
     return;
   }
