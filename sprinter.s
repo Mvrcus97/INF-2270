@@ -42,7 +42,7 @@ sprinter:
 		cmpb $0, %al      # Compare with '\0'
 		je done						# If yes jump
 
-		movb %al, (%ebx)    # if none, move char to %al
+		movb %al, (%ebx)    # if none, move char to result.
 
 		jmp increment			# Increase counters & pointers
 
@@ -144,7 +144,7 @@ sprinter:
 		divl %edi    					# Divide %EAX by %ESI (10) function divl stores remainder in EDX
 
 		addl $48, %edx        # add ASCII '0' to remainder of division.
-		push %edx							# Push the digit to stack. Where they will be stored in LITTLE endian  (wrong order)
+		push %edx							# Push the digit to stack. Where they will be stored in LITTLE endian  (wrong order, but we will pop them back to correct order later)
 		incl %esi							# Increase the specified digit count register
 
 		cmp $0, %eax          # Compare %EAX with 0. Have we done enough division?
@@ -163,7 +163,7 @@ sprinter:
 
 		# No more digits
 
-		popl %edx								# Clean register
+		popl %edx								# Store back to %EDX
 		incl %edx								# Point to next format.
 		addl $4, %ebp           # Also point to next argument.
 
