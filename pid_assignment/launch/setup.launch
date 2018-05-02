@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<launch>
+	<!-- Launch robot in Gazebo: -->
+	<include file="$(find crustcrawler_pen_gazebo)/launch/controller.launch">
+		<!-- Specify that we would like to have effort controls -->
+		<arg name="control" value="effort" />
+	</include>
+	<!-- Launch one-shot node to fix joints -->
+	<node name="gazebo_fix" pkg="pid_assignment" type="fixer.py" output="screen"/>
+</launch>
+

@@ -79,8 +79,60 @@ def rotate_path(path, angle, axis):
     :param axis: Unit vector to rotate around
     :returns: List of rotated points
     """
+
+
     # TODO: Implement as part 'c)'
-    return path
+
+    #In this task it seems the only axis chosen is the Y axis. 
+
+    rospy.loginfo("axis is: " + str(axis))
+
+    axis_val = -1
+
+    for i in range (3):
+        if axis[i] == 1:
+            #Store which axis to rotate about. X = 1, Y = 2 and Z = 3
+            axis_val = i+1
+
+    rospy.loginfo("axis_val er : " + str(axis_val))
+
+    rot_x = np.matrix([[1,0,0], 
+        [0, np.cos(angle), np.sin(angle)],
+        [0, -np.sin(angle), np.cos(angle)]])
+
+    
+    rot_y = np.matrix([[np.cos(np.degrees(angle)),0,-np.sin(np.degrees(angle))], 
+        [0, 1, 0],
+        [np.sin(np.degrees(angle)), 0,  np.cos(np.degrees(angle))]])
+    
+
+    rot_z = np.matrix([[np.cos(angle), np.sin(angle), 0], 
+        [-np.sin(angle), np.cos(angle), 0],
+        [0, 0, 1]])
+
+
+    test = np.matrix([10,10,10])
+
+
+    path2 = []
+    
+    
+    #If axis chosen is y ( which it always is)
+    if axis_val == 2:
+        for i in range(len(path)):
+            path2.append(np.dot(path[i], rot_y))
+
+
+    #Path2 is now matrix. wont work for some reason, so make the
+    #Matrix and array:
+    path2 = np.squeeze(np.asarray(path2))
+
+
+        
+
+
+
+    return path2
 
 
 def generate_path(origin, radius, num, angle, axis):
@@ -96,18 +148,17 @@ def generate_path(origin, radius, num, angle, axis):
     """
     path = []
 
-    distance_between = (2.0 * np.pi) / float(num) 
+    distance_between = (2.0 * np.pi) / float(num)
 
-    for i in range(num + 1) :
+    for i in range(num + 1):
         index = i * distance_between
         path.append(radius * np.array([np.cos(index), np.sin(index), 0.0]))
 
-    # Rotate using the rotation function.
+    # Rotate using the rotation function
     path = rotate_path(path, angle, axis)
-    #and add origin to path:
+    # Add origin to path:
     path = [p + origin for p in path]
-    return path 
-
+    return path
 
     
 
@@ -118,31 +169,30 @@ def generate_movement(path):
     :param path: List of points to draw
     :returns: FollowJointTrajectoryGoal describing the arm movement
     """
+    # Generate our goal message
     movement = FollowJointTrajectoryGoal()
 
-    # Names describes which joint is actutated by which element in the coming matrices  
+    # Names describes which joint is actuated by which element in the coming
+    # matrices
     movement.trajectory.joint_names.extend(['joint_1', 'joint_2', 'joint_3'])
-    # Goal tolerance describes how much we allow the movement to deviate from
-    # true value at the end.
+    # Goal tolerance describes how much we allow the movement to deviate
+    # from true value at the end
     movement.goal_tolerance.extend([
-    JointTolerance('joint_1', 0.1, 0., 0.),
-    JointTolerance('joint_2', 0.1, 0., 0.),
-    JointTolerance('joint_3', 0.1, 0., 0.)])
+        JointTolerance('joint_1', 0.1, 0., 0.),
+        JointTolerance('joint_2', 0.1, 0., 0.),
+        JointTolerance('joint_3', 0.1, 0., 0.)])
     # Goal time is how many seconds we allow the movement to take beyond
     # what we define in the trajectory
     movement.goal_time_tolerance = rospy.Duration(0.5)  # seconds
 
-    time = 4.0 # Cumulative time since start in secs.
+    time = 4.0  # Cumulative time since start in seconds
     movement.trajectory.points.append(
-        create_trajectory_point([0., 0., np.pi/2.], time)
-    )
+        create_trajectory_point([0., 0., np.pi / 2.], time))
 
-    #Add initial point, also as a large time fraction to avoid jerking
+    # Add initial point, also as a large time fraction to avoid jerking
     time += 4.0
     movement.trajectory.points.append(
-        create_trajectory_point(inverse_kinematic(path[0]), time)
-    )
-
+        create_trajectory_point(inverse_kinematic(path[0]), time))
 
     # Calculate total circle length
     length = path_length(path)
@@ -152,19 +202,17 @@ def generate_movement(path):
     for point in path[1:]:
         time += time_delta
         movement.trajectory.points.append(
-            create_trajectory_point([0., 0., np.pi/2.], time)
-        )
+	        create_trajectory_point(inverse_kinematic(point), time))
 
-        # Once drawing is done we add the default position
+    # Once drawing is done we add the default position
     time += 4.0
     movement.trajectory.points.append(
-    create_trajectory_point([0., 0., np.pi / 2.], time))
-
+        create_trajectory_point([0., 0., np.pi / 2.], time))
     return movement
 
 
-    
 
+    
 
 
 def draw_circle(origin, radius, num, angle, axis):
@@ -200,7 +248,6 @@ def draw_circle(origin, radius, num, angle, axis):
         print("Crustcrawler failed due to: '{!s}'({!s})"
               .format(result.error_string, result.error_code))
     return result.error_code
-
 
 
 if __name__ == '__main__':

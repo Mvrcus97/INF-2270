@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<launch>
+	<!-- Launch our custom node to control effort: -->
+	<node name="pid_controller" pkg="pid_assignment" type="node.py" output="screen"/>
+	<!-- Load RQT with pre-setup GUI for PID tuning -->
+	<node name="pid_rqt" pkg="rqt_gui" type="rqt_gui" respawn="false"
+		output="screen" required="true"
+		args="--perspective-file $(find pid_assignment)/launch/crustcrawler.perspective" />
+</launch>
